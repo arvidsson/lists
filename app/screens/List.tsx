@@ -33,13 +33,17 @@ const List = ({ navigation }: RouterProps) => {
 
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
-        const items: IItem[] = [];
+        let items: IItem[] = [];
         snapshot.docs.forEach(doc => {
           items.push({
             id: doc.id,
             ...doc.data()
           } as IItem);
         });
+
+        // sort alphabetically and then by isDone
+        items = items.sort((a:IItem, b:IItem) => a.title.localeCompare(b.title));
+        items = items.sort((a:IItem, b:IItem) => (a.isDone === b.isDone)? 0 : a.isDone? 1 : -1);
         setItems(items);
       }
     });
