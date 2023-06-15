@@ -48,7 +48,7 @@ const List = ({ navigation }: RouterProps) => {
   }, []);
 
   const addItem = async () => {
-    const doc = await addDoc(collection(db, 'items'), { title: item, isDone: false });
+    const doc = await addDoc(collection(db, 'items'), { title: item, isDone: false, listId: list?.id });
     setItem('');
   };
 
