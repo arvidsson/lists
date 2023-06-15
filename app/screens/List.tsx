@@ -1,30 +1,44 @@
 import { View, Text, Button, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { NavigationProp, useRoute, RouteProp } from '@react-navigation/native';
+import { StackParamList } from '../../App';
 
-export interface Item {
+interface IItem {
   id: string;
   title: string;
   isDone: boolean;
 }
 
-const List = () => {
-  const [items, setItems] = useState<Item[]>([]);
+interface RouterProps {
+  navigation: NavigationProp<any, any>;
+}
+
+const List = ({ navigation }: RouterProps) => {
+  const [items, setItems] = useState<IItem[]>([]);
   const [item, setItem] = useState('');
 
-  useEffect(() => {
-    const itemsRef = collection(db, 'items');
+  const route = useRoute<RouteProp<StackParamList, 'List'>>();
+  const list = route.params?.list;
 
-    const subscriber = onSnapshot(itemsRef, {
+  useEffect(() => {
+    navigation.setOptions({
+      title: list?.title,
+    });
+
+    const itemsRef = collection(db, 'items');
+    const q = query(itemsRef, where("listId", "==", list?.id));
+
+    const subscriber = onSnapshot(q, {
       next: (snapshot) => {
-        const items: Item[] = [];
+        const items: IItem[] = [];
         snapshot.docs.forEach(doc => {
           items.push({
             id: doc.id,
             ...doc.data()
-          } as Item);
+          } as IItem);
         });
         setItems(items);
       }
@@ -67,7 +81,7 @@ const List = () => {
       </View>
       { items.length > 0 && (
         <View style={styles.itemsContainer}>
-          <FlatList data={items} renderItem={(item) => renderItem(item)} keyExtractor={(item: Item) => item.id} />
+          <FlatList data={items} renderItem={(item) => renderItem(item)} keyExtractor={(item: IItem) => item.id} />
         </View>
       )}
     </View>
