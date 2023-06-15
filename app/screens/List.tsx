@@ -1,9 +1,9 @@
 import { View, Text, Button, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react'
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { NavigationProp, useRoute, RouteProp } from '@react-navigation/native';
+import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackParamList } from '../../App';
 
 interface IItem {
@@ -50,6 +50,21 @@ const List = ({ navigation }: RouterProps) => {
 
     return () => subscriber();
   }, []);
+
+  // TODO: consider not deleting in the future
+  useFocusEffect(
+    useCallback(() => {
+      return async () => {
+        console.log("exiting list");
+        const itemsRef = collection(db, 'items');
+        const q = query(itemsRef, where('isDone', '==', true));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          deleteDoc(doc.ref);
+        });
+      };
+    }, [])
+  );
 
   const addItem = async () => {
     const doc = await addDoc(collection(db, 'items'), { title: item, isDone: false, listId: list?.id });
