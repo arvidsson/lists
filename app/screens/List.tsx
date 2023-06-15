@@ -1,7 +1,8 @@
-import { View, Text, Button, TextInput, StyleSheet, FlatList } from 'react-native'
+import { View, Text, Button, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { addDoc, collection, onSnapshot } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export interface Item {
   id: string;
@@ -38,8 +39,23 @@ const List = () => {
   };
 
   const renderItem = ({ item }: any) => {
+    const itemRef = doc(db, `items/${item.id}`);
+
+    const toggleDone = async () => {
+      updateDoc(itemRef, {isDone: !item.isDone});
+    }
+
+    const deleteItem = async () => {
+      deleteDoc(itemRef);
+    }
+
     return (
-      <Text>{item.title}</Text>
+      <View style={styles.itemContainer}>
+        <TouchableOpacity style={styles.item} onPress={toggleDone}>
+          <Text style={[styles.itemText, item.isDone && styles.itemDone]}>{item.title}</Text>
+        </TouchableOpacity>
+        {/* <Ionicons name="trash-bin-outline" size={24} color="red" onPress={deleteItem} /> */}
+      </View>
     );
   }
 
@@ -50,7 +66,7 @@ const List = () => {
         <Button onPress={addItem} title='Add' disabled={item === ''} />
       </View>
       { items.length > 0 && (
-        <View>
+        <View style={styles.itemsContainer}>
           <FlatList data={items} renderItem={(item) => renderItem(item)} keyExtractor={(item: Item) => item.id} />
         </View>
       )}
@@ -62,13 +78,12 @@ export default List
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
-    marginHorizontal: 20
   },
   form: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20
+    marginVertical: 20,
+    marginHorizontal: 10
   },
   input: {
     flex: 1,
@@ -77,5 +92,25 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff'
+  },
+  itemsContainer: {
+    height: '100%'
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#8296a1'
+  },
+  item: {
+    flex: 1,
+    paddingHorizontal: 20
+  },
+  itemText: {
+    fontFamily: 'Noteworthy',
+    fontSize: 28
+  },
+  itemDone: {
+    textDecorationLine: 'line-through'
   }
 });

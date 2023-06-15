@@ -8,7 +8,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Lists" component={List} />
+        <Stack.Screen name="Lists" component={List} options={{
+          contentStyle:{
+            backgroundColor:'#faf47d'
+          }
+        }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
