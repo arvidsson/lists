@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 import { StackParamList } from '../../App';
 
@@ -25,13 +25,14 @@ const Lists = () => {
 
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
-        const lists: IList[] = [];
+        let lists: IList[] = [];
         snapshot.docs.forEach(doc => {
           lists.push({
             id: doc.id,
             ...doc.data()
           } as IList);
         });
+        lists = lists.sort((a:IList, b:IList) => a.title.localeCompare(b.title));
         setLists(lists);
       }
     });
