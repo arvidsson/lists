@@ -28,14 +28,14 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login' screenOptions={{
         headerStyle: {
-          backgroundColor: '#faf47d',
+          backgroundColor: '#fff',
         },
         headerTintColor: '#000',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
         contentStyle:{
-          backgroundColor:'#faf47d'
+          backgroundColor:'#fbf79c'
         }
       }}>
         {user ? (
