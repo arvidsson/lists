@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 import { StackParamList } from '../../App';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export interface IList {
   id: string;
@@ -53,11 +54,25 @@ const Lists = () => {
       deleteDoc(listRef);
     }
 
+    const deleteAlert = () => {
+      const message = `Delete ${list.title}?`;
+      Alert.alert(message, '', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => deleteList()},
+      ])
+    };
+
+    const num = 20 - lists.length;
+
     return (
       <View style={styles.itemContainer}>
         <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('List', { list });}}>
           <Text style={styles.itemText}>{list.title}</Text>
         </TouchableOpacity>
+        <Ionicons name="trash-outline" size={20} color="grey" onPress={deleteAlert} />
       </View>
     );
   }
@@ -81,6 +96,7 @@ export default Lists
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'column'
   },
   form: {
     flexDirection: 'row',
@@ -103,7 +119,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#8296a1'
+    borderBottomColor: '#8296a1',
+    paddingRight: 10
   },
   item: {
     flex: 1,
@@ -115,5 +132,10 @@ const styles = StyleSheet.create({
   },
   itemDone: {
     textDecorationLine: 'line-through'
+  },
+  empty: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#8296a1',
+    paddingRight: 10
   }
 });
