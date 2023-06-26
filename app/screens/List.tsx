@@ -2,27 +2,22 @@ import { View, Text, Button, TextInput, StyleSheet, FlatList, TouchableOpacity }
 import React, { useCallback, useEffect, useState } from 'react'
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackParamList } from '../../App';
-
-interface IItem {
-  id: string;
-  title: string;
-  isDone: boolean;
-}
+import Item, { ItemData } from '../components/Item';
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
 const List = ({ navigation }: RouterProps) => {
-  const [items, setItems] = useState<IItem[]>([]);
+  const [items, setItems] = useState<ItemData[]>([]);
   const [item, setItem] = useState('');
 
   const route = useRoute<RouteProp<StackParamList, 'List'>>();
   const list = route.params?.list;
 
+  // load all items
   useEffect(() => {
     navigation.setOptions({
       title: list?.title,
@@ -33,17 +28,17 @@ const List = ({ navigation }: RouterProps) => {
 
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
-        let items: IItem[] = [];
+        let items: ItemData[] = [];
         snapshot.docs.forEach(doc => {
           items.push({
             id: doc.id,
             ...doc.data()
-          } as IItem);
+          } as ItemData);
         });
 
         // sort alphabetically and then by isDone
-        items = items.sort((a:IItem, b:IItem) => a.title.localeCompare(b.title));
-        items = items.sort((a:IItem, b:IItem) => (a.isDone === b.isDone)? 0 : a.isDone? 1 : -1);
+        items = items.sort((a:ItemData, b:ItemData) => a.title.localeCompare(b.title));
+        items = items.sort((a:ItemData, b:ItemData) => (a.isDone === b.isDone)? 0 : a.isDone? 1 : -1);
         setItems(items);
       }
     });
@@ -55,7 +50,7 @@ const List = ({ navigation }: RouterProps) => {
   useFocusEffect(
     useCallback(() => {
       return async () => {
-        console.log("exiting list");
+        console.log("exiting list and removing all done items");
         const itemsRef = collection(db, 'items');
         const q = query(itemsRef, where('isDone', '==', true));
         const querySnapshot = await getDocs(q);
@@ -71,27 +66,6 @@ const List = ({ navigation }: RouterProps) => {
     setItem('');
   };
 
-  const renderItem = ({ item }: any) => {
-    const itemRef = doc(db, `items/${item.id}`);
-
-    const toggleDone = async () => {
-      updateDoc(itemRef, {isDone: !item.isDone});
-    }
-
-    const deleteItem = async () => {
-      deleteDoc(itemRef);
-    }
-
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity style={styles.item} onPress={toggleDone}>
-          <Text style={[styles.itemText, item.isDone && styles.itemDone]}>{item.title}</Text>
-        </TouchableOpacity>
-        {/* <Ionicons name="trash-bin-outline" size={24} color="red" onPress={deleteItem} /> */}
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -100,7 +74,7 @@ const List = ({ navigation }: RouterProps) => {
       </View>
       { items.length > 0 && (
         <View style={styles.itemsContainer}>
-          <FlatList data={items} renderItem={(item) => renderItem(item)} keyExtractor={(item: IItem) => item.id} />
+          <FlatList data={items} renderItem={({item}) => (<Item item={item} />)} keyExtractor={(item: ItemData) => item.id} />
         </View>
       )}
     </View>
@@ -129,21 +103,4 @@ const styles = StyleSheet.create({
   itemsContainer: {
     height: '100%'
   },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#8296a1'
-  },
-  item: {
-    flex: 1,
-    paddingHorizontal: 20
-  },
-  itemText: {
-    fontFamily: 'Noteworthy',
-    fontSize: 28
-  },
-  itemDone: {
-    textDecorationLine: 'line-through'
-  }
 });
