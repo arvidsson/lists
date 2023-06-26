@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "lists-app",
-    "slug": "lists-app",
+    "slug": "lists",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4196de9a-fb88-4552-988b-9175c9f0d724"
+      }
+    },
+    "owner": "arvidsson"
   }
 }
