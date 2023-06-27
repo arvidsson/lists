@@ -1,6 +1,14 @@
-import { View, Text, Button, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { View, Button, TextInput, StyleSheet, FlatList } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackParamList } from '../../App';
@@ -24,23 +32,25 @@ const List = ({ navigation }: RouterProps) => {
     });
 
     const itemsRef = collection(db, 'items');
-    const q = query(itemsRef, where("listId", "==", list?.id));
+    const q = query(itemsRef, where('listId', '==', list?.id));
 
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
         let items: ItemData[] = [];
-        snapshot.docs.forEach(doc => {
+        snapshot.docs.forEach((doc) => {
           items.push({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           } as ItemData);
         });
 
         // sort alphabetically and then by isDone
-        items = items.sort((a:ItemData, b:ItemData) => a.title.localeCompare(b.title));
-        items = items.sort((a:ItemData, b:ItemData) => (a.isDone === b.isDone)? 0 : a.isDone? 1 : -1);
+        items = items.sort((a: ItemData, b: ItemData) => a.title.localeCompare(b.title));
+        items = items.sort((a: ItemData, b: ItemData) =>
+          a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1,
+        );
         setItems(items);
-      }
+      },
     });
 
     return () => subscriber();
@@ -50,7 +60,7 @@ const List = ({ navigation }: RouterProps) => {
   useFocusEffect(
     useCallback(() => {
       return async () => {
-        console.log("exiting list and removing all done items");
+        console.log('exiting list and removing all done items');
         const itemsRef = collection(db, 'items');
         const q = query(itemsRef, where('isDone', '==', true));
         const querySnapshot = await getDocs(q);
@@ -58,39 +68,51 @@ const List = ({ navigation }: RouterProps) => {
           deleteDoc(doc.ref);
         });
       };
-    }, [])
+    }, []),
   );
 
   const addItem = async () => {
-    const doc = await addDoc(collection(db, 'items'), { title: item, isDone: false, listId: list?.id });
+    const doc = await addDoc(collection(db, 'items'), {
+      title: item,
+      isDone: false,
+      listId: list?.id,
+    });
     setItem('');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.form}>
-        <TextInput style={styles.input} placeholder='Add item' onChangeText={(text: string) => setItem(text)} value={item} />
-        <Button onPress={addItem} title='Add' disabled={item === ''} />
+        <TextInput
+          style={styles.input}
+          placeholder="Add item"
+          onChangeText={(text: string) => setItem(text)}
+          value={item}
+        />
+        <Button onPress={addItem} title="Add" disabled={item === ''} />
       </View>
-      { items.length > 0 && (
+      {items.length > 0 && (
         <View style={styles.itemsContainer}>
-          <FlatList data={items} renderItem={({item}) => (<Item item={item} />)} keyExtractor={(item: ItemData) => item.id} />
+          <FlatList
+            data={items}
+            renderItem={({ item }) => <Item item={item} />}
+            keyExtractor={(item: ItemData) => item.id}
+          />
         </View>
       )}
     </View>
-  )
-}
+  );
+};
 
-export default List
+export default List;
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   form: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   input: {
     flex: 1,
@@ -98,9 +120,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     padding: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   itemsContainer: {
-    height: '100%'
+    height: '100%',
   },
 });

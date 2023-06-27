@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import List from './app/screens/List';
 import Login from './app/screens/Login';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,8 @@ export type StackParamList = {
   Lists: undefined;
   List: { list: IList } | undefined;
 };
+
+export type StackNavigation = NavigationProp<StackParamList>;
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -26,25 +28,28 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login' screenOptions={{
-        headerStyle: {
-          backgroundColor: '#fff',
-        },
-        headerTintColor: '#000',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-        contentStyle:{
-          backgroundColor:'#fbf79c'
-        }
-      }}>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTintColor: '#000',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          contentStyle: {
+            backgroundColor: '#fbf79c',
+          },
+        }}
+      >
         {user ? (
           <>
             <Stack.Screen name="Lists" component={Lists} />
             <Stack.Screen name="List" component={List} />
           </>
-        ):(
-          <Stack.Screen name="Login" component={Login}/>
+        ) : (
+          <Stack.Screen name="Login" component={Login} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
