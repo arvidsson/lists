@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
-import List from './app/screens/List';
-import Login from './app/screens/Login';
+import ListScreen from './app/screens/ListScreen';
+import LoginScreen from './app/screens/LoginScreen';
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
-import Lists, { IList } from './app/screens/Lists';
+import ListsScreen, { IList } from './app/screens/ListsScreen';
 
 export type StackParamList = {
   Login: undefined;
@@ -45,11 +45,11 @@ export default function App() {
       >
         {user ? (
           <>
-            <Stack.Screen name="Lists" component={Lists} />
-            <Stack.Screen name="List" component={List} />
+            <Stack.Screen name="Lists" component={ListsScreen} />
+            <Stack.Screen name="List" component={ListScreen} />
           </>
         ) : (
-          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Login" component={LoginScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 
-const Login = () => {
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {

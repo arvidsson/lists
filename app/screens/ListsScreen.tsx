@@ -21,7 +21,7 @@ export interface IList {
   owners: string[];
 }
 
-const Lists = () => {
+const ListsScreen = () => {
   const [lists, setLists] = useState<IList[]>([]);
   const [list, setList] = useState('');
 
@@ -129,7 +129,7 @@ const Lists = () => {
   );
 };
 
-export default Lists;
+export default ListsScreen;
 
 const styles = StyleSheet.create({
   container: {

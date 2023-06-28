@@ -18,7 +18,7 @@ interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
-const List = ({ navigation }: RouterProps) => {
+const ListScreen = ({ navigation }: RouterProps) => {
   const [items, setItems] = useState<ItemData[]>([]);
   const [item, setItem] = useState('');
 
@@ -117,7 +117,7 @@ const List = ({ navigation }: RouterProps) => {
   );
 };
 
-export default List;
+export default ListScreen;
 
 const styles = StyleSheet.create({
   container: {},
