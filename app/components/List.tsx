@@ -5,6 +5,7 @@ import { db } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { colors } from '../Theme';
 
 export type ListData = {
   id: string;
@@ -58,8 +59,8 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#8296a1',
+    borderTopWidth: 1,
+    borderTopColor: colors.lines,
     paddingRight: 10,
   },
   item: {

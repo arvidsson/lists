@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { colors } from '../Theme';
 
 export type ItemData = {
   id: string;
@@ -51,8 +52,9 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#8296a1',
+    borderTopWidth: 1,
+    borderTopColor: colors.lines,
+    paddingLeft: 30,
   },
   item: {
     flex: 1,
@@ -64,6 +66,7 @@ const styles = StyleSheet.create({
   },
   itemDone: {
     textDecorationLine: 'line-through',
+    color: colors.strike,
   },
   itemEditing: {
     color: '#ff00ff',

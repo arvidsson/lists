@@ -15,6 +15,7 @@ import { auth, db } from '../../firebaseConfig';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import List, { ListData } from '../components/List';
+import { colors } from '../Theme';
 
 const ListsScreen = () => {
   const [lists, setLists] = useState<ListData[]>([]);
@@ -56,6 +57,7 @@ const ListsScreen = () => {
   }, []);
 
   const addList = async () => {
+    if (list === '') return;
     const uid = auth.currentUser?.uid;
     const doc = await addDoc(collection(db, 'lists'), { title: list, owners: [uid] });
     setList('');
@@ -63,35 +65,57 @@ const ListsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add list"
-          onChangeText={(text: string) => setList(text)}
-          value={list}
-          clearButtonMode="always"
-          onBlur={() => setList('')}
-        />
-        <Button onPress={addList} title="Add" disabled={list === ''} />
+      <View style={styles.leftContainer}>
+        <View style={styles.leftContainerBorder}></View>
       </View>
-      {lists.length > 0 && (
-        <View style={styles.itemsContainer}>
-          <FlatList
-            data={lists}
-            renderItem={({ item }) => <List list={item} />}
-            keyExtractor={(list: ListData) => list.id}
+      <View style={styles.rightContainer}>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.input}
+            placeholder="Add list"
+            onChangeText={(text: string) => setList(text)}
+            value={list}
+            clearButtonMode="always"
+            onBlur={() => setList('')}
           />
+          <Button onPress={addList} title="Add" disabled={list === ''} />
         </View>
-      )}
+        {lists.length > 0 && (
+          <View style={styles.itemsContainer}>
+            <FlatList
+              data={lists}
+              renderItem={({ item }) => <List list={item} />}
+              keyExtractor={(list: ListData) => list.id}
+              initialNumToRender={15}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column',
+    flex: 1,
+    flexDirection: 'row',
   },
-  form: {
+  leftContainer: {
+    width: 40,
+    borderRightWidth: 1,
+    borderRightColor: colors.border,
+    paddingRight: 3,
+  },
+  leftContainerBorder: {
+    borderRightWidth: 1,
+    borderRightColor: colors.border,
+    width: '100%',
+    height: '100%',
+  },
+  rightContainer: {
+    flex: 1,
+  },
+  inputView: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
@@ -106,6 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   itemsContainer: {
+    flex: 1,
     height: '100%',
   },
 });

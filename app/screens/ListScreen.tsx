@@ -1,4 +1,4 @@
-import { View, Button, TextInput, StyleSheet, FlatList } from 'react-native';
+import { Text, View, Button, TextInput, StyleSheet, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   addDoc,
@@ -13,6 +13,7 @@ import { db } from '../../firebaseConfig';
 import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackParamList } from '../../App';
 import Item, { ItemData } from '../components/Item';
+import { colors } from '../Theme';
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -82,6 +83,7 @@ const ListScreen = ({ navigation }: RouterProps) => {
   );
 
   const addItem = async () => {
+    if (item === '') return;
     const doc = await addDoc(collection(db, 'items'), {
       title: item,
       isDone: false,
@@ -92,33 +94,56 @@ const ListScreen = ({ navigation }: RouterProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add item"
-          onChangeText={(text: string) => setItem(text)}
-          onSubmitEditing={addItem}
-          value={item}
-          blurOnSubmit={false}
-          clearButtonMode="while-editing"
-        />
-        <Button onPress={addItem} title="Add" disabled={item === ''} />
+      <View style={styles.leftContainer}>
+        <View style={styles.leftContainerBorder}></View>
       </View>
-      {items.length > 0 && (
-        <View style={styles.itemsContainer}>
-          <FlatList
-            data={items}
-            renderItem={({ item }) => <Item item={item} />}
-            keyExtractor={(item: ItemData) => item.id}
+      <View style={styles.rightContainer}>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.input}
+            placeholder="Add item"
+            onChangeText={(text: string) => setItem(text)}
+            onSubmitEditing={addItem}
+            value={item}
+            blurOnSubmit={false}
+            clearButtonMode="while-editing"
           />
         </View>
-      )}
+        {items.length > 0 && (
+          <View style={styles.itemsContainer}>
+            <FlatList
+              data={items}
+              renderItem={({ item }) => <Item item={item} />}
+              keyExtractor={(item: ItemData) => item.id}
+              initialNumToRender={15}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  leftContainer: {
+    width: 40,
+    borderRightWidth: 1,
+    borderRightColor: colors.border,
+    paddingRight: 3,
+  },
+  leftContainerBorder: {
+    borderRightWidth: 1,
+    borderRightColor: colors.border,
+    width: '100%',
+    height: '100%',
+  },
+  rightContainer: {
+    flex: 1,
+  },
   inputView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -134,6 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   itemsContainer: {
+    flex: 1,
     height: '100%',
   },
 });

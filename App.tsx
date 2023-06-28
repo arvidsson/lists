@@ -7,6 +7,7 @@ import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import ListsScreen from './app/screens/ListsScreen';
 import { ListData } from './app/components/List';
+import { colors } from './app/Theme';
 
 export type StackParamList = {
   Login: undefined;
@@ -33,14 +34,14 @@ export default function App() {
         initialRouteName="Login"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#000',
+            backgroundColor: colors.headerBackground,
           },
-          headerTintColor: '#fff',
+          headerTintColor: colors.white,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
           contentStyle: {
-            backgroundColor: '#fbf79c',
+            backgroundColor: colors.background,
           },
         }}
       >
