@@ -49,6 +49,16 @@ const List = ({ navigation }: RouterProps) => {
         items = items.sort((a: ItemData, b: ItemData) =>
           a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1,
         );
+
+        // add empty items to fill out the page
+        const minItems = 15;
+        if (items.length < minItems) {
+          const num = minItems - items.length;
+          for (let i = 0; i < num; i++) {
+            items.push({ id: i.toString(), title: ' ', isDone: false });
+          }
+        }
+
         setItems(items);
       },
     });
@@ -82,12 +92,15 @@ const List = ({ navigation }: RouterProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.form}>
+      <View style={styles.inputView}>
         <TextInput
           style={styles.input}
           placeholder="Add item"
           onChangeText={(text: string) => setItem(text)}
+          onSubmitEditing={addItem}
           value={item}
+          blurOnSubmit={false}
+          clearButtonMode="while-editing"
         />
         <Button onPress={addItem} title="Add" disabled={item === ''} />
       </View>
@@ -108,7 +121,7 @@ export default List;
 
 const styles = StyleSheet.create({
   container: {},
-  form: {
+  inputView: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
