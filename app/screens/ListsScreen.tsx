@@ -10,7 +10,17 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -56,11 +66,42 @@ const ListsScreen = () => {
     return () => subscriber();
   }, []);
 
-  const addList = async () => {
-    if (list === '') return;
+  const saveList = async (email: string | undefined) => {
     const uid = auth.currentUser?.uid;
-    const doc = await addDoc(collection(db, 'lists'), { title: list, owners: [uid] });
+    let owners = [uid];
+
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', '==', email));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      owners = [...owners, doc.id];
+    });
+
+    const doc = await addDoc(collection(db, 'lists'), {
+      title: list,
+      owners: owners,
+    });
     setList('');
+  };
+
+  const addList = () => {
+    if (list === '') return;
+    Alert.prompt(
+      'Share with user?',
+      'Enter email',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+        },
+        {
+          text: 'Save',
+          onPress: (text: string | undefined) => saveList(text),
+        },
+      ],
+      'plain-text',
+    );
   };
 
   return (
