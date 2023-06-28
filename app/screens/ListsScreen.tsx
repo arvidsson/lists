@@ -14,15 +14,10 @@ import { addDoc, collection, deleteDoc, doc, onSnapshot, query, where } from 'fi
 import { auth, db } from '../../firebaseConfig';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-export interface IList {
-  id: string;
-  title: string;
-  owners: string[];
-}
+import List, { ListData } from '../components/List';
 
 const ListsScreen = () => {
-  const [lists, setLists] = useState<IList[]>([]);
+  const [lists, setLists] = useState<ListData[]>([]);
   const [list, setList] = useState('');
 
   const navigation = useNavigation<StackNavigation>();
@@ -33,16 +28,16 @@ const ListsScreen = () => {
 
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
-        let lists: IList[] = [];
+        let lists: ListData[] = [];
 
         snapshot.docs.forEach((doc) => {
           lists.push({
             id: doc.id,
             ...doc.data(),
-          } as IList);
+          } as ListData);
         });
 
-        lists = lists.sort((a: IList, b: IList) => a.title.localeCompare(b.title));
+        lists = lists.sort((a: ListData, b: ListData) => a.title.localeCompare(b.title));
 
         // add empty lists to fill out the page
         const minLists = 15;
@@ -66,43 +61,6 @@ const ListsScreen = () => {
     setList('');
   };
 
-  const renderList = ({ item: list }: any) => {
-    const listRef = doc(db, `lists/${list.id}`);
-
-    const deleteList = async () => {
-      deleteDoc(listRef);
-    };
-
-    const deleteAlert = () => {
-      const message = `Delete ${list.title}?`;
-      Alert.alert(message, '', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        { text: 'OK', onPress: () => deleteList() },
-      ]);
-    };
-
-    const num = 20 - lists.length;
-
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity
-          style={styles.item}
-          onPress={() => {
-            navigation.navigate('List', { list });
-          }}
-        >
-          <Text style={styles.itemText}>{list.title}</Text>
-        </TouchableOpacity>
-        {list.title !== ' ' && (
-          <Ionicons name="trash-outline" size={20} color="grey" onPress={deleteAlert} />
-        )}
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -120,16 +78,14 @@ const ListsScreen = () => {
         <View style={styles.itemsContainer}>
           <FlatList
             data={lists}
-            renderItem={(list) => renderList(list)}
-            keyExtractor={(list: IList) => list.id}
+            renderItem={({ item }) => <List list={item} />}
+            keyExtractor={(list: ListData) => list.id}
           />
         </View>
       )}
     </View>
   );
 };
-
-export default ListsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -152,27 +108,6 @@ const styles = StyleSheet.create({
   itemsContainer: {
     height: '100%',
   },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#8296a1',
-    paddingRight: 10,
-  },
-  item: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  itemText: {
-    fontFamily: 'Noteworthy',
-    fontSize: 28,
-  },
-  itemDone: {
-    textDecorationLine: 'line-through',
-  },
-  empty: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#8296a1',
-    paddingRight: 10,
-  },
 });
+
+export default ListsScreen;

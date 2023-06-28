@@ -117,8 +117,6 @@ const ListScreen = ({ navigation }: RouterProps) => {
   );
 };
 
-export default ListScreen;
-
 const styles = StyleSheet.create({
   container: {},
   inputView: {
@@ -139,3 +137,5 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+export default ListScreen;

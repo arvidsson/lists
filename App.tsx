@@ -5,12 +5,13 @@ import LoginScreen from './app/screens/LoginScreen';
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
-import ListsScreen, { IList } from './app/screens/ListsScreen';
+import ListsScreen from './app/screens/ListsScreen';
+import { ListData } from './app/components/List';
 
 export type StackParamList = {
   Login: undefined;
   Lists: undefined;
-  List: { list: IList } | undefined;
+  List: { list: ListData } | undefined;
 };
 
 export type StackNavigation = NavigationProp<StackParamList>;
