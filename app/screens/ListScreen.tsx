@@ -47,9 +47,9 @@ const ListScreen = ({ navigation }: RouterProps) => {
 
         // sort alphabetically and then by isDone
         items = items.sort((a: ItemData, b: ItemData) => a.title.localeCompare(b.title));
-        items = items.sort((a: ItemData, b: ItemData) =>
-          a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1,
-        );
+        // items = items.sort((a: ItemData, b: ItemData) =>
+        //   a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1,
+        // );
 
         // add empty items to fill out the page
         const minItems = 15;

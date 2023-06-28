@@ -5,5 +5,5 @@ export const colors = {
   headerBackground: '#000',
   lines: '#c9d798',
   border: '#f59392',
-  strike: '#777',
+  strike: '#000',
 };

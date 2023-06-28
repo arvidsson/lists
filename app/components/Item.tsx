@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
@@ -30,19 +30,36 @@ const Item = ({ item }: ItemProps) => {
     deleteDoc(itemRef);
   };
 
-  const editItem = () => {
-    console.log('editing item');
-    setEditing(true);
+  const updateTitle = (title: string) => {
+    if (title === '') return;
+    updateDoc(itemRef, { title: title });
+    console.log('edited item title');
+  };
+
+  const editAlert = () => {
+    const message = `Edit item`;
+    Alert.prompt(
+      message,
+      '',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+        },
+        {
+          text: 'Save',
+          onPress: (text: string | undefined) => updateTitle(text || ''),
+        },
+      ],
+      'plain-text',
+      item.title,
+    );
   };
 
   return (
     <View style={styles.itemContainer}>
-      <TouchableOpacity style={styles.item} onPress={toggleDone} onLongPress={editItem}>
-        <Text
-          style={[styles.itemText, item.isDone && styles.itemDone, editing && styles.itemEditing]}
-        >
-          {item.title}
-        </Text>
+      <TouchableOpacity style={styles.item} onPress={toggleDone} onLongPress={editAlert}>
+        <Text style={[styles.itemText, item.isDone && styles.itemDone]}>{item.title}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -54,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: colors.lines,
-    paddingLeft: 30,
+    paddingRight: 10,
   },
   item: {
     flex: 1,
@@ -67,9 +84,6 @@ const styles = StyleSheet.create({
   itemDone: {
     textDecorationLine: 'line-through',
     color: colors.strike,
-  },
-  itemEditing: {
-    color: '#ff00ff',
   },
 });
 
