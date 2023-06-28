@@ -34,13 +34,25 @@ const Lists = () => {
     const subscriber = onSnapshot(q, {
       next: (snapshot) => {
         let lists: IList[] = [];
+
         snapshot.docs.forEach((doc) => {
           lists.push({
             id: doc.id,
             ...doc.data(),
           } as IList);
         });
+
         lists = lists.sort((a: IList, b: IList) => a.title.localeCompare(b.title));
+
+        // add empty lists to fill out the page
+        const minLists = 15;
+        if (lists.length < minLists) {
+          const num = minLists - lists.length;
+          for (let i = 0; i < num; i++) {
+            lists.push({ id: i.toString(), title: ' ', owners: [] });
+          }
+        }
+
         setLists(lists);
       },
     });
@@ -84,7 +96,9 @@ const Lists = () => {
         >
           <Text style={styles.itemText}>{list.title}</Text>
         </TouchableOpacity>
-        <Ionicons name="trash-outline" size={20} color="grey" onPress={deleteAlert} />
+        {list.title !== ' ' && (
+          <Ionicons name="trash-outline" size={20} color="grey" onPress={deleteAlert} />
+        )}
       </View>
     );
   };
@@ -97,6 +111,8 @@ const Lists = () => {
           placeholder="Add list"
           onChangeText={(text: string) => setList(text)}
           value={list}
+          clearButtonMode="always"
+          onBlur={() => setList('')}
         />
         <Button onPress={addList} title="Add" disabled={list === ''} />
       </View>
