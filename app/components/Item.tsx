@@ -19,11 +19,8 @@ const Item = ({ item }: ItemProps) => {
   const itemRef = doc(db, `items/${item.id}`);
 
   const toggleDone = async () => {
-    // skip empty items
     if (item.title === ' ') return;
-
     updateDoc(itemRef, { isDone: !item.isDone });
-    console.log('toggled item');
   };
 
   const deleteItem = async () => {
@@ -33,7 +30,6 @@ const Item = ({ item }: ItemProps) => {
   const updateTitle = (title: string) => {
     if (title === '') return;
     updateDoc(itemRef, { title: title });
-    console.log('edited item title');
   };
 
   const editAlert = () => {

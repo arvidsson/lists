@@ -93,7 +93,9 @@ const ListsScreen = () => {
       [
         {
           text: 'Cancel',
-          onPress: () => {},
+          onPress: () => {
+            saveList('');
+          },
         },
         {
           text: 'Save',

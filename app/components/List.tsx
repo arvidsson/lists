@@ -1,6 +1,6 @@
 import { View, Text, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigation } from '../../App';
@@ -21,36 +21,50 @@ const List = ({ list }: ListProps) => {
   const listRef = doc(db, `lists/${list.id}`);
   const navigation = useNavigation<StackNavigation>();
 
+  const openList = () => {
+    if (list.title === ' ') return;
+    navigation.navigate('List', { list });
+  };
+
   const deleteList = async () => {
     deleteDoc(listRef);
   };
 
-  const deleteAlert = () => {
-    const message = `Delete ${list.title}?`;
-    Alert.alert(message, '', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      { text: 'OK', onPress: () => deleteList() },
-    ]);
+  const updateTitle = (title: string) => {
+    if (title === '') return;
+    updateDoc(listRef, { title: title });
+  };
+
+  const editList = () => {
+    Alert.prompt(
+      'Edit list',
+      '',
+      [
+        {
+          text: 'Save',
+          onPress: (text: string | undefined) => updateTitle(text || ''),
+          style: 'default',
+        },
+        {
+          text: 'Cancel',
+          style: 'default',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteList(),
+        },
+      ],
+      'plain-text',
+      list.title,
+    );
   };
 
   return (
     <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.item}
-        onPress={() => {
-          // skip empty items
-          if (list.title === ' ') return;
-          navigation.navigate('List', { list });
-        }}
-      >
+      <TouchableOpacity style={styles.item} onPress={openList} onLongPress={editList}>
         <Text style={styles.itemText}>{list.title}</Text>
       </TouchableOpacity>
-      {list.title !== ' ' && (
-        <Ionicons name="trash-outline" size={20} color="grey" onPress={deleteAlert} />
-      )}
     </View>
   );
 };

@@ -71,7 +71,6 @@ const ListScreen = ({ navigation }: RouterProps) => {
   useFocusEffect(
     useCallback(() => {
       return async () => {
-        console.log('exiting list and removing all done items');
         const itemsRef = collection(db, 'items');
         const q = query(itemsRef, where('isDone', '==', true));
         const querySnapshot = await getDocs(q);
