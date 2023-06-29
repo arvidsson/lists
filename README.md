@@ -2,9 +2,11 @@
 
 React native app for managing todo lists.
 
-<img src="screenshot01.png" height=400>
-<img src="screenshot02.png" height=400>
-<img src="screenshot03.png" height=400>
+<p float="left">
+  <img src="screenshot01.png" height=400>
+  <img src="screenshot02.png" height=400>
+  <img src="screenshot03.png" height=400>
+</p>
 
 ## Features
 
