@@ -8,6 +8,7 @@ import { auth } from './firebase';
 import ListsScreen from './app/screens/ListsScreen';
 import { ListData } from './app/components/List';
 import { colors } from './app/Theme';
+import { NetworkProvider } from './network';
 
 export type StackParamList = {
   Login: undefined;
@@ -29,31 +30,33 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.headerBackground,
-          },
-          headerTintColor: colors.white,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
-        }}
-      >
-        {user ? (
-          <>
-            <Stack.Screen name="Lists" component={ListsScreen} />
-            <Stack.Screen name="List" component={ListScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <NetworkProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: colors.headerBackground,
+            },
+            headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+            contentStyle: {
+              backgroundColor: colors.background,
+            },
+          }}
+        >
+          {user ? (
+            <>
+              <Stack.Screen name="Lists" component={ListsScreen} />
+              <Stack.Screen name="List" component={ListScreen} />
+            </>
+          ) : (
+            <Stack.Screen name="Login" component={LoginScreen} />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NetworkProvider>
   );
 }
