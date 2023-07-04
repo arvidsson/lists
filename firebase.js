@@ -1,4 +1,3 @@
-import 'expo-firestore-offline-persistence';
 import { initializeApp } from 'firebase/app';
 import { initializeAuth } from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache } from 'firebase/firestore';
