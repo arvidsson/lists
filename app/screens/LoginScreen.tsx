@@ -1,9 +1,11 @@
-import { View, StyleSheet, TextInput, Button } from 'react-native';
-import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, Button, Text } from 'react-native';
+import React, { useContext, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
+import { NetworkContext } from '../../network';
 
 const LoginScreen = () => {
+  const { isConnected } = useContext(NetworkContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,6 +57,7 @@ const LoginScreen = () => {
         />
       </View>
       <Button onPress={login} title="Login" />
+      {!isConnected && <Text>You are offline :(</Text>}
     </View>
   );
 };
