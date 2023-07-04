@@ -13,6 +13,7 @@ React native app for managing todo lists.
 - Add, delete, edit lists
 - Add, delete, edit todo items
 - Share lists with other users
+- Offline mode
 
 ## Built With
 
