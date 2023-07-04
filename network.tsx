@@ -12,7 +12,6 @@ export const NetworkProvider = ({ children }: NetworkProps) => {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
-      console.log('setting network state');
       setIsConnected(state.isConnected || false);
     });
 

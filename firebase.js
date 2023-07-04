@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { initializeAuth } from 'firebase/auth';
-import { initializeFirestore, persistentLocalCache } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getReactNativePersistence } from 'firebase/auth/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -15,4 +15,4 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const auth = initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
-export const db = initializeFirestore(app, { localCache: persistentLocalCache() });
+export const db = getFirestore(app);

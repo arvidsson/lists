@@ -1,21 +1,23 @@
 import { View, StyleSheet, TextInput, Button, FlatList, Alert } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
-import { StackNavigation } from '../../App';
 import List, { ListData } from '../components/List';
 import { colors } from '../Theme';
 import { NetworkContext } from '../../network';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ListsScreen = () => {
   const { isConnected } = useContext(NetworkContext);
   const [lists, setLists] = useState<ListData[]>([]);
   const [list, setList] = useState('');
 
-  const navigation = useNavigation<StackNavigation>();
-
   useEffect(() => {
+    if (!isConnected) {
+      loadListsFromStorage();
+      return;
+    }
+
     const listsRef = collection(db, 'lists');
     const q = query(listsRef, where('owners', 'array-contains', auth.currentUser?.uid));
 
@@ -41,6 +43,7 @@ const ListsScreen = () => {
           }
         }
 
+        saveListsInStorage(lists);
         setLists(lists);
       },
     });
@@ -48,7 +51,28 @@ const ListsScreen = () => {
     return () => subscriber();
   }, []);
 
+  const saveListsInStorage = async (lists: ListData[]) => {
+    try {
+      const jsonValue = JSON.stringify(lists);
+      await AsyncStorage.setItem('lists', jsonValue);
+    } catch (e) {
+      console.log('failed to save to storage: ', e);
+    }
+  };
+
+  const loadListsFromStorage = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('lists');
+      if (jsonValue !== null) {
+        setLists(JSON.parse(jsonValue));
+      }
+    } catch (e) {
+      console.log('failed to load from storage: ', e);
+    }
+  };
+
   const saveList = async (email: string | undefined) => {
+    if (!isConnected) return;
     const uid = auth.currentUser?.uid;
     let owners = [uid];
 
@@ -68,13 +92,14 @@ const ListsScreen = () => {
   };
 
   const addList = () => {
+    if (!isConnected) return;
     if (list === '') return;
     Alert.prompt(
       'Share with user?',
       'Enter email',
       [
         {
-          text: 'Cancel',
+          text: 'Skip',
           onPress: () => {
             saveList('');
           },

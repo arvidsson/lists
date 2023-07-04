@@ -15,6 +15,7 @@ import { StackParamList } from '../../App';
 import Item, { ItemData } from '../components/Item';
 import { colors } from '../Theme';
 import { NetworkContext } from '../../network';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -33,6 +34,10 @@ const ListScreen = ({ navigation }: RouterProps) => {
     navigation.setOptions({
       title: list?.title,
     });
+    if (!isConnected) {
+      loadItemsFromStorage();
+      return;
+    }
 
     const itemsRef = collection(db, 'items');
     const q = query(itemsRef, where('listId', '==', list?.id));
@@ -63,6 +68,7 @@ const ListScreen = ({ navigation }: RouterProps) => {
         }
 
         setItems(items);
+        saveItemsInStorage(items);
       },
     });
 
@@ -73,6 +79,7 @@ const ListScreen = ({ navigation }: RouterProps) => {
   useFocusEffect(
     useCallback(() => {
       return async () => {
+        if (!isConnected) return;
         const itemsRef = collection(db, 'items');
         const q = query(itemsRef, where('isDone', '==', true));
         const querySnapshot = await getDocs(q);
@@ -83,7 +90,30 @@ const ListScreen = ({ navigation }: RouterProps) => {
     }, []),
   );
 
+  const saveItemsInStorage = async (items: ItemData[]) => {
+    if (!list) return;
+    try {
+      const jsonValue = JSON.stringify(items);
+      await AsyncStorage.setItem(list.id, jsonValue);
+    } catch (e) {
+      console.log('failed to save to storage: ', e);
+    }
+  };
+
+  const loadItemsFromStorage = async () => {
+    if (!list) return;
+    try {
+      const jsonValue = await AsyncStorage.getItem(list.id);
+      if (jsonValue !== null) {
+        setItems(JSON.parse(jsonValue));
+      }
+    } catch (e) {
+      console.log('failed to load from storage: ', e);
+    }
+  };
+
   const addItem = async () => {
+    if (!isConnected) return;
     if (item === '') return;
     const doc = await addDoc(collection(db, 'items'), {
       title: item,

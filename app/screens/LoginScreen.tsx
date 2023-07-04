@@ -16,7 +16,7 @@ const LoginScreen = () => {
     try {
       const user = await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.log(error);
+      console.log('failed to signup: ', error);
     } finally {
       setLoading(false);
     }
@@ -27,7 +27,7 @@ const LoginScreen = () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.log(error);
+      console.log('failed to login: ', error);
     } finally {
       setLoading(false);
     }

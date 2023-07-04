@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { colors } from '../Theme';
@@ -18,10 +18,17 @@ type ItemProps = {
 const Item = ({ item }: ItemProps) => {
   const { isConnected } = useContext(NetworkContext);
   const itemRef = doc(db, `items/${item.id}`);
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    setIsDone(item.isDone);
+  }, [item]);
 
   const toggleDone = async () => {
     if (item.title === ' ') return;
-    updateDoc(itemRef, { isDone: !item.isDone });
+    const done = !isDone;
+    setIsDone(done);
+    updateDoc(itemRef, { isDone: done });
   };
 
   const deleteItem = async () => {
@@ -57,7 +64,7 @@ const Item = ({ item }: ItemProps) => {
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity style={styles.item} onPress={toggleDone} onLongPress={editAlert}>
-        <Text style={[styles.itemText, item.isDone && styles.itemDone]}>{item.title}</Text>
+        <Text style={[styles.itemText, isDone && styles.itemDone]}>{item.title}</Text>
       </TouchableOpacity>
     </View>
   );
