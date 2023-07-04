@@ -6,6 +6,7 @@ import List, { ListData } from '../components/List';
 import { colors } from '../Theme';
 import { NetworkContext } from '../../network';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ItemData } from '../components/Item';
 
 const ListsScreen = () => {
   const { isConnected } = useContext(NetworkContext);
@@ -34,6 +35,10 @@ const ListsScreen = () => {
 
         lists = lists.sort((a: ListData, b: ListData) => a.title.localeCompare(b.title));
 
+        lists.forEach((l) => {
+          saveItemsInStorage(l);
+        });
+
         // add empty lists to fill out the page
         const minLists = 15;
         if (lists.length < minLists) {
@@ -50,6 +55,35 @@ const ListsScreen = () => {
 
     return () => subscriber();
   }, []);
+
+  const saveItemsInStorage = async (list: ListData) => {
+    let items: ItemData[] = [];
+    const q = query(collection(db, 'items'), where('listId', '==', list.id));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      items.push({
+        id: doc.id,
+        ...doc.data(),
+      } as ItemData);
+    });
+
+    // add empty items to fill out the page
+    const minItems = 15;
+    if (items.length < minItems) {
+      const num = minItems - items.length;
+      for (let i = 0; i < num; i++) {
+        items.push({ id: i.toString(), title: ' ', isDone: false });
+      }
+    }
+
+    try {
+      const jsonValue = JSON.stringify(items);
+      await AsyncStorage.setItem(list.id, jsonValue);
+    } catch (e) {
+      console.log('failed to save to storage: ', e);
+    }
+  };
 
   const saveListsInStorage = async (lists: ListData[]) => {
     try {

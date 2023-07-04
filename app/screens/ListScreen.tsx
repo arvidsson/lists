@@ -68,7 +68,6 @@ const ListScreen = ({ navigation }: RouterProps) => {
         }
 
         setItems(items);
-        saveItemsInStorage(items);
       },
     });
 
@@ -89,16 +88,6 @@ const ListScreen = ({ navigation }: RouterProps) => {
       };
     }, []),
   );
-
-  const saveItemsInStorage = async (items: ItemData[]) => {
-    if (!list) return;
-    try {
-      const jsonValue = JSON.stringify(items);
-      await AsyncStorage.setItem(list.id, jsonValue);
-    } catch (e) {
-      console.log('failed to save to storage: ', e);
-    }
-  };
 
   const loadItemsFromStorage = async () => {
     if (!list) return;
