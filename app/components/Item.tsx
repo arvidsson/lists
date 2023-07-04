@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { colors } from '../Theme';
+import { NetworkContext } from '../../network';
 
 export type ItemData = {
   id: string;
@@ -15,7 +16,7 @@ type ItemProps = {
 };
 
 const Item = ({ item }: ItemProps) => {
-  const [editing, setEditing] = useState(false);
+  const { isConnected } = useContext(NetworkContext);
   const itemRef = doc(db, `items/${item.id}`);
 
   const toggleDone = async () => {
@@ -33,6 +34,7 @@ const Item = ({ item }: ItemProps) => {
   };
 
   const editAlert = () => {
+    if (!isConnected) return;
     const message = `Edit item`;
     Alert.prompt(
       message,

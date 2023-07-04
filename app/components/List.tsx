@@ -1,11 +1,11 @@
 import { View, Text, Alert, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigation } from '../../App';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors } from '../Theme';
+import { NetworkContext } from '../../network';
 
 export type ListData = {
   id: string;
@@ -18,6 +18,7 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
+  const { isConnected } = useContext(NetworkContext);
   const listRef = doc(db, `lists/${list.id}`);
   const navigation = useNavigation<StackNavigation>();
 
@@ -36,6 +37,7 @@ const List = ({ list }: ListProps) => {
   };
 
   const editList = () => {
+    if (!isConnected) return;
     Alert.prompt(
       'Edit list',
       '',

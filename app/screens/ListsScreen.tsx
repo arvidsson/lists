@@ -1,33 +1,15 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Button,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TextInput, Button, FlatList, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
+import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { StackNavigation } from '../../App';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import List, { ListData } from '../components/List';
 import { colors } from '../Theme';
+import { NetworkContext } from '../../network';
 
 const ListsScreen = () => {
+  const { isConnected } = useContext(NetworkContext);
   const [lists, setLists] = useState<ListData[]>([]);
   const [list, setList] = useState('');
 
@@ -120,8 +102,9 @@ const ListsScreen = () => {
             value={list}
             clearButtonMode="always"
             onBlur={() => setList('')}
+            editable={isConnected}
           />
-          <Button onPress={addList} title="Add" disabled={list === ''} />
+          <Button onPress={addList} title="Add" disabled={!isConnected || list === ''} />
         </View>
         {lists.length > 0 && (
           <View style={styles.itemsContainer}>

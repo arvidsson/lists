@@ -1,5 +1,5 @@
-import { Text, View, Button, TextInput, StyleSheet, FlatList } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { View, TextInput, StyleSheet, FlatList } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   addDoc,
   collection,
@@ -14,12 +14,14 @@ import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navi
 import { StackParamList } from '../../App';
 import Item, { ItemData } from '../components/Item';
 import { colors } from '../Theme';
+import { NetworkContext } from '../../network';
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
 const ListScreen = ({ navigation }: RouterProps) => {
+  const { isConnected } = useContext(NetworkContext);
   const [items, setItems] = useState<ItemData[]>([]);
   const [item, setItem] = useState('');
 
@@ -106,6 +108,7 @@ const ListScreen = ({ navigation }: RouterProps) => {
             value={item}
             blurOnSubmit={false}
             clearButtonMode="while-editing"
+            editable={isConnected}
           />
         </View>
         {items.length > 0 && (
