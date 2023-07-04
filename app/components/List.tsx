@@ -1,7 +1,7 @@
 import { View, Text, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebase';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';

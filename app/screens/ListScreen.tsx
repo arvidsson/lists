@@ -9,7 +9,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebase';
 import { NavigationProp, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { StackParamList } from '../../App';
 import Item, { ItemData } from '../components/Item';

@@ -4,7 +4,7 @@ import ListScreen from './app/screens/ListScreen';
 import LoginScreen from './app/screens/LoginScreen';
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth } from './firebase';
 import ListsScreen from './app/screens/ListsScreen';
 import { ListData } from './app/components/List';
 import { colors } from './app/Theme';

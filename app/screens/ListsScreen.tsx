@@ -21,7 +21,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { auth, db } from '../../firebaseConfig';
+import { auth, db } from '../../firebase';
 import { StackNavigation } from '../../App';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import List, { ListData } from '../components/List';
